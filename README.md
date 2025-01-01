@@ -2,6 +2,10 @@
 
 Dataset: [car_insurance.csv](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/77b3a79ae2d4307a019ea364117b0dcd6266eddd/car_insurance.csv)
 
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/61e1175df7a3ea98e88d72b6fdc351338fd5af9f/Photos/DataCamp%20Project%20Details.png)
+
+
+# Holistic Approach:
 ## Inspecting the Data
 
 **Code Explanation:**
