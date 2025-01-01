@@ -1,6 +1,6 @@
 # Logistic Regression Analysis: Car Insurance Dataset
 
-Dataset:
+Dataset: [car_insurance.csv](data/car_insurance.csv)
 
 ## Inspecting the Data
 
