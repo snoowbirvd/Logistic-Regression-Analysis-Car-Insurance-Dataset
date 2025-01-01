@@ -280,4 +280,5 @@ print
 30y+      1052
 Name: driving_experience, dtype: int64
 ```
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/ae36cb342ea0c9f8aadb9d37ec2f3d2614c51dcc/Confusion%20Matrix.png)
 ![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/9ed4cb74cb9d3073f36867f1a4e88df05bfd7ed5/Images/Outcome%20Distribution%20by%20Best%20Feature.png)
