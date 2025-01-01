@@ -70,6 +70,8 @@ plt.title("Distribution of Outcome Variable")
 plt.show()
 ```
 
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/c40936bac8cd3a3331994eec83fa0875cb680edb/Images/Distribution%20of%20Outcome%20Variable.png)
+
 ### Correlation Heatmap
 
 **Purpose:** To identify relationships between numerical variables and check for multicollinearity.
