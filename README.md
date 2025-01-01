@@ -4,12 +4,6 @@ Dataset: [car_insurance.csv](https://github.com/snoowbirvd/Logistic-Regression-A
 
 ## Inspecting the Data
 
-### Load and Explore Data
-
-**Purpose:** To understand the structure, features, and summary statistics of the dataset. This step helps identify missing values, data types, and potential outliers or inconsistencies that need to be addressed before analysis.
-
-**Why:** By exploring the data, we can spot issues like missing or irrelevant values and prepare the data for further analysis. For example, checking the data types ensures numerical columns can be processed correctly by the model.
-
 **Code Explanation:**
 
 - `pd.read_csv("car_insurance.csv")`: Loads the dataset into a DataFrame.
