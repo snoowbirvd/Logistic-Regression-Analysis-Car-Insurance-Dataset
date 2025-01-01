@@ -29,6 +29,56 @@ print(cars.describe(include='all'))
 - `head()`: Displays the first few rows of the dataset.
 - `describe(include='all')`: Summarizes statistics for all columns, including counts, means, and unique values.
 
+```
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10000 entries, 0 to 9999
+Data columns (total 18 columns):
+ #   Column               Non-Null Count  Dtype  
+---  ------               --------------  -----  
+ 0   id                   10000 non-null  int64  
+ 1   age                  10000 non-null  int64  
+ 2   gender               10000 non-null  int64  
+ 3   driving_experience   10000 non-null  object 
+ 4   education            10000 non-null  object 
+ 5   income               10000 non-null  object 
+ 6   credit_score         9018 non-null   float64
+ 7   vehicle_ownership    10000 non-null  float64
+ 8   vehicle_year         10000 non-null  object 
+ 9   married              10000 non-null  float64
+ 10  children             10000 non-null  float64
+ 11  postal_code          10000 non-null  int64  
+ 12  annual_mileage       9043 non-null   float64
+ 13  vehicle_type         10000 non-null  object 
+ 14  speeding_violations  10000 non-null  int64  
+ 15  duis                 10000 non-null  int64  
+ 16  past_accidents       10000 non-null  int64  
+ 17  outcome              10000 non-null  float64
+dtypes: float64(6), int64(7), object(5)
+memory usage: 1.4+ MB
+None
+       id  age  gender  ... duis past_accidents outcome
+0  569520    3       0  ...    0              0     0.0
+1  750365    0       1  ...    0              0     1.0
+2  199901    0       0  ...    0              0     0.0
+3  478866    0       1  ...    0              0     0.0
+4  731664    1       1  ...    0              1     1.0
+
+[5 rows x 18 columns]
+                   id           age  ...  past_accidents       outcome
+count    10000.000000  10000.000000  ...    10000.000000  10000.000000
+unique            NaN           NaN  ...             NaN           NaN
+top               NaN           NaN  ...             NaN           NaN
+freq              NaN           NaN  ...             NaN           NaN
+mean    500521.906800      1.489500  ...        1.056300      0.313300
+std     290030.768758      1.025278  ...        1.652454      0.463858
+min        101.000000      0.000000  ...        0.000000      0.000000
+25%     249638.500000      1.000000  ...        0.000000      0.000000
+50%     501777.000000      1.000000  ...        0.000000      0.000000
+75%     753974.500000      2.000000  ...        2.000000      1.000000
+max     999976.000000      3.000000  ...       15.000000      1.000000
+
+[11 rows x 18 columns]
+```
 ### Handle Missing Values
 
 **Purpose:** To ensure the dataset is complete for analysis. Missing values can distort model results, reduce predictive accuracy, and cause errors during computations.
