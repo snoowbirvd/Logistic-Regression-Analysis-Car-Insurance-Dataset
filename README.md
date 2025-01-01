@@ -1,5 +1,9 @@
 # Logistic Regression Analysis: Car Insurance Dataset
 
+## Project Overview
+This project aims to build a logistic regression model to predict whether a customer will make a claim on their car insurance during the policy period. The goal is to identify the single feature that results in the best-performing model, as measured by accuracy. The dataset provided (`car_insurance.csv`) contains various features about customers and their car insurance policies.
+
+
 Dataset: [car_insurance.csv](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/77b3a79ae2d4307a019ea364117b0dcd6266eddd/car_insurance.csv)
 
 ![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/70ad21d14253d304f4c3dcace7e5e272c9b95f37/Images/DataCamp%20Project%20Details.png)
@@ -99,10 +103,10 @@ print("\nAfter Filling Missing Values:\n", cars.isnull().sum())
 
 Purpose: To understand the balance of the target variable (e.g., the class distribution of "outcome").
 
-Why: Imbalanced classes can skew the model toward predicting the majority class, leading to poor performance on the minority class. By visualizing the distribution, we can assess whether techniques like oversampling, undersampling, or weighted modeling are needed to handle class imbalance.\
+Why: Imbalanced classes can skew the model toward predicting the majority class, leading to poor performance on the minority class. By visualizing the distribution, we can assess whether techniques like oversampling, undersampling, or weighted modeling are needed to handle class imbalance.
 
 Findings:
-After visualizing the target variable, the plot shows that the "outcome" is balanced (both classes have a roughly equal number of observations). This suggests that we do not need to apply class balancing techniques at this stage, as the data distribution supports unbiased training.
+The plot shows that the "outcome" is balanced (both classes have a roughly equal number of observations). This suggests that we do not need to apply class balancing techniques at this stage, as the data distribution supports unbiased training.
 
 ```python
 sns.countplot(x="outcome", data=cars)
@@ -248,6 +252,19 @@ driving_experience[T.20-29y]    -3.4384      0.104    -32.957      0.000      -3
 driving_experience[T.30y+]      -4.4674      0.228    -19.557      0.000      -4.915      -4.020
 ================================================================================================
 ```
+```
+0-9y      3530
+10-19y    3299
+20-29y    2119
+30y+      1052
+Name: driving_experience, dtype: int64
+```
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/9ed4cb74cb9d3073f36867f1a4e88df05bfd7ed5/Images/Outcome%20Distribution%20by%20Best%20Feature.png)
+```
+
+### **Conclusion:**
+By analyzing various features, we identified that driving_experience is the best single predictor of whether a customer will make a claim on their car insurance during the policy period. This feature achieved the highest model accuracy of 77.71%. The logistic regression model shows that as driving experience increases, the likelihood of making a claim decreases.
+```
 ### Visualizing Performance of the Best Feature
 
 **Purpose:** To evaluate the model's performance through a confusion matrix and detailed classification metrics.
@@ -267,18 +284,59 @@ plt.title("Confusion Matrix for Best Feature Model")
 plt.show()
 
 # Performance Metrics
-print
+print("Classification Report:\n", classification_report(cars["outcome"], y_pred_class))
+print("Accuracy Score:", accuracy_score(cars["outcome"], y_pred_class))
+```
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/ae36cb342ea0c9f8aadb9d37ec2f3d2614c51dcc/Confusion%20Matrix.png)
+```
+Classification Report:
+               precision    recall  f1-score   support
+
+         0.0       0.86      0.81      0.83      6867
+         1.0       0.63      0.71      0.67      3133
+
+    accuracy                           0.78     10000
+   macro avg       0.74      0.76      0.75     10000
+weighted avg       0.79      0.78      0.78     10000
+
+Accuracy Score: 0.7771
 
 ```
 - `confusion_matrix`: Summarizes model predictions versus actuals.
 - `classification_report`: Provides detailed metrics for precision, recall, and F1-score.
+
+## Summary
+
+We built a model to predict whether a customer will make a claim on their car insurance during the policy period. Our goal was to find the single best feature that could give us the most accurate predictions.
+
+### Key Findings
+
+- **Best Predictor**: The most important factor in predicting whether a customer will make a claim is their **driving experience**.
+  - **Insight**: Customers with more driving experience are less likely to make a claim.
+
+- **Model Accuracy**: Our model correctly predicts whether a customer will make a claim **77.71%** of the time.
+  - **Insight**: This means that out of every 100 predictions, about 78 will be correct.
+
+- **Precision**: When our model predicts that a customer will make a claim, it is correct **62.80%** of the time.
+  - **Insight**: This means that out of every 10 claims predicted by our model, about 6 will actually be claims. The remaining 4 will be false alarms.
+
+- **Recall**: Our model identifies **70.77%** of the actual claims.
+  - **Insight**: This means that out of every 10 actual claims, our model correctly predicts about 7. The remaining 3 are missed by our model.
+
+- **Balanced Performance**: The **F1-Score** of **66.50%** indicates a good balance between precision (accuracy of predictions) and recall (ability to identify actual claims).
+  - **Insight**: Our model strikes a balance between making accurate predictions and identifying as many claims as possible.
+
+### Visualizing Model Performance
+
+We used a confusion matrix to visualize the performance of our model. Here’s a simplified explanation:
+
+- **True Positives**: The model correctly identified 2,217 cases where customers made a claim.
+- **True Negatives**: The model correctly identified 5,554 cases where customers did not make a claim.
+- **False Positives**: The model incorrectly predicted 1,313 cases as claims when they were not.
+- **False Negatives**: The model missed 916 actual claims, predicting them as non-claims.
+
   
 ```
-0-9y      3530
-10-19y    3299
-20-29y    2119
-30y+      1052
-Name: driving_experience, dtype: int64
-```
-![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/ae36cb342ea0c9f8aadb9d37ec2f3d2614c51dcc/Confusion%20Matrix.png)
-![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/9ed4cb74cb9d3073f36867f1a4e88df05bfd7ed5/Images/Outcome%20Distribution%20by%20Best%20Feature.png)
+
+
+
