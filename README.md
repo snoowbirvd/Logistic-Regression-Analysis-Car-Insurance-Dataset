@@ -174,9 +174,9 @@ features = cars.drop(columns=irrelevant_columns).columns
 ```
 - `drop(columns)`: Removes specified columns from the dataset.
   
-## MFeature Evaluation Using Logistic Regression
+## Feature Evaluation Using Logistic Regression
 
-To evaluate the predictive power of each feature in the dataset with respect to the target variable (outcome) and identify the best predictor for insurance claims. This process ensures that the model is robust, even with an imbalanced dataset.
+To evaluate the predictive power of each feature in the dataset with respect to the target variable (outcome) and identify the best predictor for insurance claims.
 
 ### Process
 
