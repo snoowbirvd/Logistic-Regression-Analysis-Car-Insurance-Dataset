@@ -85,8 +85,8 @@ max     999976.000000      3.000000  ...       15.000000      1.000000
 ```
 ### Handle Missing Values
 
-To ensure the dataset is complete for analysis. Missing values can distort model results, reduce predictive accuracy, and cause errors during computations.
- - Example: If credit_score is missing for many customers, it could distort risk assessments, as credit scores are often correlated with claim frequency or fraud likelihood.
+To ensure the dataset is complete for analysis since missing values can distort model results, reduce predictive accuracy, and cause errors during computations.
+ - e.g. If credit_score is missing for many customers, it could distort risk assessments, as credit scores are often correlated with claim frequency or fraud likelihood.
 
 Missing values in key columns like "credit\_score" or "annual\_mileage" might affect predictions. I fill them up using simple median imputation (since the missing values doesnt make up more than 20-30% of the features) and compare summary statitics afterwards
 
@@ -139,7 +139,7 @@ Outcome Counts:
 - No Claims (0): 7,000 instances
 - Claims (1): 3,000 instances
 
-- Given the moderate imbalance on the outcome counts, we'll evaluate our model using multiple metrics beyond accuracy, such as precision, recall, and F1-score to provide a more comprehensive view of model performance, especially in identifying the minority class (claims)
+- Given the moderately imbalance data on the outcome counts, we'll evaluate our model using multiple metrics beyond accuracy, such as precision, recall, and F1-score to provide a more comprehensive view of model performance, especially in identifying the minority class (claims)
 
 ```python
 sns.countplot(x="outcome", data=cars)
@@ -174,7 +174,70 @@ features = cars.drop(columns=irrelevant_columns).columns
 ```
 - `drop(columns)`: Removes specified columns from the dataset.
   
-## Logistic Regression Analysis
+## MFeature Evaluation Using Logistic Regression
+
+To evaluate the predictive power of each feature in the dataset with respect to the target variable (outcome) and identify the best predictor for insurance claims. This process ensures that the model is robust, even with an imbalanced dataset.
+
+### Process
+
+#### Logistic Regression Model
+- A logistic regression model was created for each feature to predict the target variable (outcome).
+- The model output was a probability score for each observation, indicating the likelihood of a positive outcome (1, a claim).
+
+#### Threshold for Classification
+- The probability scores were converted into binary predictions (0 or 1) using a threshold of 0.5.
+
+#### Evaluation Metrics
+The following metrics were calculated to assess the model performance for each feature:
+- **Accuracy**: Proportion of correct predictions out of the total predictions.
+- **Precision**: Proportion of predicted claims (1) that are actual claims.
+- **Recall**: Proportion of actual claims (1) correctly predicted by the model.
+- **F1-Score**: The harmonic mean of precision and recall, providing a balanced measure of both metrics.
+
+#### Sorting by F1-Score
+- The features were ranked based on their F1-Scores. This ensures that the evaluation prioritizes features that balance precision and recall, which is crucial for imbalanced datasets.
+
+
+```python
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from statsmodels.formula.api import logit
+import pandas as pd
+
+# List to store the evaluation results
+evaluation_results = []
+
+# Evaluate each feature
+for col in features:
+    model = logit(f"outcome ~ {col}", data=cars).fit(disp=False)
+    y_pred = model.predict(cars[col])
+    y_pred_class = (y_pred >= 0.5).astype(int)
+    
+    accuracy = accuracy_score(cars["outcome"], y_pred_class)
+    precision = precision_score(cars["outcome"], y_pred_class)
+    recall = recall_score(cars["outcome"], y_pred_class)
+    f1 = f1_score(cars["outcome"], y_pred_class)
+    
+    evaluation_results.append({
+        "Feature": col,
+        "Accuracy": accuracy,
+        "Precision": precision,
+        "Recall": recall,
+        "F1-Score": f1
+    })
+
+# Convert to DataFrame for easier viewing
+evaluation_df = pd.DataFrame(evaluation_results)
+
+# Display the evaluation results
+print(evaluation_df)
+
+```
+## Outcome
+
+- The results showed each feature's performance across the defined metrics.
+- The features were sorted by F1-Score to identify the best predictor for claims (1).
+- This approach ensured that the selected feature is effective in identifying claims while maintaining a balance between minimizing false positives and false negatives.
+
 
 ### Iterative Model Building and Evaluation
 
