@@ -86,8 +86,9 @@ max     999976.000000      3.000000  ...       15.000000      1.000000
 ### Handle Missing Values
 
 **Purpose:** To ensure the dataset is complete for analysis. Missing values can distort model results, reduce predictive accuracy, and cause errors during computations.
+ - Example: If credit_score is missing for many customers, it could distort risk assessments, as credit scores are often correlated with claim frequency or fraud likelihood.
 
-**Why:** Missing values in key columns like "credit\_score" or "annual\_mileage" might affect predictions. We fill them using the mean because it is a simple imputation method that avoids introducing bias and retains numerical consistency.
+Missing values in key columns like "credit\_score" or "annual\_mileage" might affect predictions. I fill them up using simple median imputation (since the missing values doesnt make up more than 20-30% of the features) and compare summary statitics afterwards
 
 ```python
 # Check and Fill Missing Values
@@ -99,6 +100,37 @@ print("\nAfter Filling Missing Values:\n", cars.isnull().sum())
 - `isnull().sum()`: Counts missing values for each column.
 - `fillna(mean)`: Fills missing values with the column's mean, preserving the dataset's overall distribution.
 
+```python
+# Summary statistics
+print("Before Imputation:")
+print(cars[["credit_score", "annual_mileage"]].describe())
+
+print("\nAfter Imputation:")
+print(cars[["credit_score", "annual_mileage"]].describe())
+```
+```
+Before Imputation:
+       credit_score  annual_mileage
+count  10000.000000    10000.000000
+mean       0.516718    11726.000000
+std        0.130781     2681.649329
+min        0.053358     2000.000000
+25%        0.431509    10000.000000
+50%        0.525033    12000.000000
+75%        0.607607    13000.000000
+max        0.960819    22000.000000
+
+After Imputation:
+       credit_score  annual_mileage
+count  10000.000000    10000.000000
+mean       0.516718    11726.000000
+std        0.130781     2681.649329
+min        0.053358     2000.000000
+25%        0.431509    10000.000000
+50%        0.525033    12000.000000
+75%        0.607607    13000.000000
+max        0.960819    22000.000000
+```
 ## Visualizing the Distribution of Target Variable
 
 Purpose: To understand the balance of the target variable (e.g., the class distribution of "outcome").
@@ -330,10 +362,16 @@ We built a model to predict whether a customer will make a claim on their car in
 
 We used a confusion matrix to visualize the performance of our model. Here’s a simplified explanation:
 
+|                | Predicted No | Predicted Yes |
+|----------------|--------------|---------------|
+| **Actual No**  | 5554         | 1313          |
+| **Actual Yes** | 916          | 2217          |
+
 - **True Positives**: The model correctly identified 2,217 cases where customers made a claim.
 - **True Negatives**: The model correctly identified 5,554 cases where customers did not make a claim.
 - **False Positives**: The model incorrectly predicted 1,313 cases as claims when they were not.
 - **False Negatives**: The model missed 916 actual claims, predicting them as non-claims.
+
 
   
 ```
