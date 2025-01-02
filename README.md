@@ -381,7 +381,7 @@ plt.title("Outcome Distribution by Driving Experience")
 plt.show()
 
 ```
-
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/32cdd57927337d998f2cb8257e201c3a60860f33/feature%20importance%20based%20on%20odd%20ratios.png)
 ![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/9ed4cb74cb9d3073f36867f1a4e88df05bfd7ed5/Images/Outcome%20Distribution%20by%20Best%20Feature.png)
 
 
