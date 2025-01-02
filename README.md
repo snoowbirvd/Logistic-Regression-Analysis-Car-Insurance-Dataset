@@ -85,7 +85,7 @@ max     999976.000000      3.000000  ...       15.000000      1.000000
 ```
 ### Handle Missing Values
 
-**Purpose:** To ensure the dataset is complete for analysis. Missing values can distort model results, reduce predictive accuracy, and cause errors during computations.
+To ensure the dataset is complete for analysis. Missing values can distort model results, reduce predictive accuracy, and cause errors during computations.
  - Example: If credit_score is missing for many customers, it could distort risk assessments, as credit scores are often correlated with claim frequency or fraud likelihood.
 
 Missing values in key columns like "credit\_score" or "annual\_mileage" might affect predictions. I fill them up using simple median imputation (since the missing values doesnt make up more than 20-30% of the features) and compare summary statitics afterwards
@@ -133,12 +133,13 @@ max        0.960819    22000.000000
 ```
 ## Visualizing the Distribution of Target Variable
 
-Purpose: To understand the balance of the target variable (e.g., the class distribution of "outcome").
+To understand the balance of the target variable (e.g., the class distribution of "outcome").
 
-Why: Imbalanced classes can skew the model toward predicting the majority class, leading to poor performance on the minority class. By visualizing the distribution, we can assess whether techniques like oversampling, undersampling, or weighted modeling are needed to handle class imbalance.
+Outcome Counts:
+- No Claims (0): 7,000 instances
+- Claims (1): 3,000 instances
 
-Findings:
-The plot shows that the "outcome" is balanced (both classes have a roughly equal number of observations). This suggests that we do not need to apply class balancing techniques at this stage, as the data distribution supports unbiased training.
+- Given the moderate imbalance on the outcome counts, we'll evaluate our model using multiple metrics beyond accuracy, such as precision, recall, and F1-score to provide a more comprehensive view of model performance, especially in identifying the minority class (claims)
 
 ```python
 sns.countplot(x="outcome", data=cars)
@@ -148,49 +149,30 @@ plt.show()
 
 ![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/c40936bac8cd3a3331994eec83fa0875cb680edb/Images/Distribution%20of%20Outcome%20Variable.png)
 
-### Correlation Heatmap
-
-**Purpose:** To identify relationships between numerical variables and check for multicollinearity.
-
-**Why:** High correlations between features can cause redundancy, making the model less interpretable and possibly unstable. Visualizing correlations guides us in removing or combining features.
-
-```python
-numerical_cols = cars.select_dtypes(include=['float64', 'int64']).columns
-plt.figure(figsize=(10, 6))
-sns.heatmap(cars[numerical_cols].corr(), annot=True, cmap="coolwarm", fmt=".2f")
-plt.title("Correlation Heatmap")
-plt.show()
-```
-- `select_dtypes`: Selects numerical columns for correlation analysis.
-- `heatmap`: Visualizes the correlation matrix.
-  
 ## Preprocessing and Feature Selection
+
+To have a clear understanding of the data (e.g. variability and distribution of categories) before deciding which features to use
+```
+# Inspect unique values for categorical features
+for col in cars.columns:
+    if cars[col].dtype == 'object':
+        print(f"{col} unique values:\n{cars[col].value_counts()}\n")
+
+# Inspect unique values for numerical features
+for col in cars.columns:
+    if cars[col].dtype != 'object':
+        print(f"{col} unique values:\n{cars[col].value_counts()}\n")
+```
 
 ### Dropping Irrelevant Columns
 
-**Purpose:** To remove non-predictive features, such as IDs, which do not contain meaningful information for the model.
-
-**Why:** Columns like "id" don't influence the target variable and only add unnecessary noise. Removing them ensures cleaner and more efficient modeling.
+To remove non-predictive features, such as IDs, which do not contain meaningful information for the model.
 
 ```python
 irrelevant_columns = ["id", "outcome"]
 features = cars.drop(columns=irrelevant_columns).columns
 ```
 - `drop(columns)`: Removes specified columns from the dataset.
-  
-### Analyzing Categorical Features
-
-**Purpose:** To evaluate variability and understand the distribution of categories in non-numerical features.
-
-**Why:** Features with little variability contribute minimally to predictions. Understanding category distributions helps refine feature selection.
-
-```python
-for col in features:
-    if cars[col].dtype == 'object':
-        print(f"{col} unique values:\n{cars[col].value_counts()}\n")
-```
-- `value_counts()`: Displays the count of each category.
-- Iterates through object-type columns to inspect their distributions.
   
 ## Logistic Regression Analysis
 
