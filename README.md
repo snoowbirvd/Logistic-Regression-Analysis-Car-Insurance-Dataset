@@ -252,41 +252,31 @@ best_accuracy = best_feature_row["Accuracy"]
 
 ```
 ## Outcome
-
+```
+               Feature  Accuracy  Precision    Recall  F1-Score
+2    driving_experience    0.7771   0.628045  0.707628  0.665466
+6     vehicle_ownership    0.7351   0.579868  0.560804  0.570177
+0                   age    0.7747   0.718254  0.462177  0.562439
+4                income    0.7425   0.653804  0.378551  0.479483
+5          credit_score    0.7053   0.572430  0.234599  0.332805
+11       annual_mileage    0.6904   0.609467  0.032876  0.062386
+1                gender    0.6867   0.000000  0.000000  0.000000
+3             education    0.6867   0.000000  0.000000  0.000000
+7          vehicle_year    0.6867   0.000000  0.000000  0.000000
+8               married    0.6867   0.000000  0.000000  0.000000
+9              children    0.6867   0.000000  0.000000  0.000000
+10          postal_code    0.6867   0.000000  0.000000  0.000000
+12         vehicle_type    0.6867   0.000000  0.000000  0.000000
+13  speeding_violations    0.6867   0.000000  0.000000  0.000000
+14                 duis    0.6867   0.000000  0.000000  0.000000
+15       past_accidents    0.6867   0.000000  0.000000  0.000000
+```
 - The results showed each feature's performance across the defined metrics.
 - The features were sorted by F1-Score to identify the best predictor for claims (1).
 - This approach ensured that the selected feature is effective in identifying claims while maintaining a balance between minimizing false positives and false negatives.
 
-```
-# Find the best model corresponding to the best feature
-best_model = models[features.tolist().index(best_feature_name)]
-
-# Create the best_feature_df
-best_feature_df = pd.DataFrame({"best_feature": [best_feature_name],"best_accuracy": [best_accuracy]})
-
-# Display the best feature
-print(best_feature_df)
-
-# Visualize Performance of the Best Feature
-y_pred = best_model.predict(cars[[best_feature_name]])
-y_pred_class = (y_pred >= 0.5).astype(int)
-
-# Confusion Matrix
-cm = confusion_matrix(cars["outcome"], y_pred_class)
-sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["No", "Yes"], yticklabels=["No", "Yes"])
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-plt.title("Confusion Matrix for Best Feature Model")
-plt.show()
-
-# Performance Metrics
-print("Classification Report:\n", classification_report(cars["outcome"], y_pred_class))
-print("Accuracy Score:", accuracy_score(cars["outcome"], y_pred_class))
-```
 ### **Conclusion:**
 By analyzing various features, we identified that driving_experience is the best single predictor of whether a customer will make a claim on their car insurance during the policy period. This feature achieved the highest model accuracy of 77.71%. The logistic regression model shows that as driving experience increases, the likelihood of making a claim decreases.
-```
-```
 ### Visualizing Performance of the Best Feature
 
 **Purpose:** To evaluate the model's performance through a confusion matrix and detailed classification metrics.
