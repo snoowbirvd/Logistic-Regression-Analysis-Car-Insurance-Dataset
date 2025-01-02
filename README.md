@@ -199,24 +199,35 @@ The following metrics were calculated to assess the model performance for each f
 
 
 ```python
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+# Import necessary libraries
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
 from statsmodels.formula.api import logit
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# List to store the evaluation results
+# List to store the evaluation results and models
 evaluation_results = []
+models = []
 
-# Evaluate each feature
+# Loop through each feature
 for col in features:
+    # Train logistic regression model for the single feature
     model = logit(f"outcome ~ {col}", data=cars).fit(disp=False)
-    y_pred = model.predict(cars[col])
-    y_pred_class = (y_pred >= 0.5).astype(int)
+    models.append(model)  # Store the model
     
+    # Predict probabilities and convert to binary using a threshold
+    y_pred_prob = model.predict(cars[[col]])  # Ensure correct format
+    y_pred_class = (y_pred_prob >= 0.5).astype(int)
+    
+    # Evaluate model metrics
     accuracy = accuracy_score(cars["outcome"], y_pred_class)
     precision = precision_score(cars["outcome"], y_pred_class)
     recall = recall_score(cars["outcome"], y_pred_class)
     f1 = f1_score(cars["outcome"], y_pred_class)
     
+    # Store the results
     evaluation_results.append({
         "Feature": col,
         "Accuracy": accuracy,
@@ -225,11 +236,19 @@ for col in features:
         "F1-Score": f1
     })
 
-# Convert to DataFrame for easier viewing
+# Convert results to a DataFrame for visualization
 evaluation_df = pd.DataFrame(evaluation_results)
+
+# Sort by F1-Score
+evaluation_df = evaluation_df.sort_values(by="F1-Score", ascending=False)
 
 # Display the evaluation results
 print(evaluation_df)
+
+# Retrieve the best feature based on F1-Score
+best_feature_row = evaluation_df.iloc[0]  # First row of sorted DataFrame
+best_feature_name = best_feature_row["Feature"]
+best_accuracy = best_feature_row["Accuracy"]
 
 ```
 ## Outcome
@@ -238,118 +257,18 @@ print(evaluation_df)
 - The features were sorted by F1-Score to identify the best predictor for claims (1).
 - This approach ensured that the selected feature is effective in identifying claims while maintaining a balance between minimizing false positives and false negatives.
 
-
-### Iterative Model Building and Evaluation
-
-**Purpose:** To assess the predictive power of each feature by training individual logistic regression models.
-
-**Why:** Building a model for each feature separately highlights their importance, simplifying initial model exploration. Odds ratios provide interpretable insights about feature impacts.
-
-```python
-models = []
-accuracies = []
-summary_data = []
-
-for col in features:
-    model = logit(f"outcome ~ {col}", data=cars).fit(disp=False)
-    models.append(model)
-
-    # Calculate Accuracy
-    conf_matrix = model.pred_table()
-    tn, fp, fn, tp = conf_matrix[0, 0], conf_matrix[0, 1], conf_matrix[1, 0], conf_matrix[1, 1]
-    acc = (tn + tp) / (tn + fp + fn + tp)
-    accuracies.append(acc)
-
-    # Collect Summary Data
-    summary_data.append({
-        "Feature": col,
-        "Odds Ratios": np.exp(model.params),
-        "Accuracy": acc
-    })
-
-    # Print Detailed Model Summary
-    print(f"Feature: {col}")
-    print(model.summary())
-    print("\nOdds Ratios:\n", np.exp(model.params))
-    print("-" * 50)
 ```
-- `logit`: Builds logistic regression models for binary outcomes.
-- `params`: Extracts feature coefficients for odds ratio calculation.
-- `pred_table`: Generates a confusion matrix for accuracy computation.
+# Find the best model corresponding to the best feature
+best_model = models[features.tolist().index(best_feature_name)]
 
-### Identifying the Best Feature
+# Create the best_feature_df
+best_feature_df = pd.DataFrame({"best_feature": [best_feature_name],"best_accuracy": [best_accuracy]})
 
-**Purpose:** To select the most predictive feature for further analysis and refined modeling.
+# Display the best feature
+print(best_feature_df)
 
-**Why:** Focusing on the best feature reduces complexity and prioritizes performance. This is particularly useful for interpretable and practical applications.
-
-```python
-# Find the best feature
-best_feature_index = accuracies.index(max(accuracies))
-best_feature_name = features[best_feature_index]
-best_accuracy = max(accuracies)
-
-# Create and display the best feature DataFrame
-best_feature_df = pd.DataFrame({
-    "best_feature": [best_feature_name],
-    "best_accuracy": [best_accuracy]
-})
-print("\nBest Feature and Accuracy:\n", best_feature_df)
-
-best_model = models[best_feature_index]
-
-print(f"\nBest Feature: {best_feature_name} with Accuracy: {best_accuracy:.2f}")
-print("\nBest Feature Model Summary:\n")
-print(best_model.summary())
-```
-```
-Best Feature and Accuracy:
-          best_feature  best_accuracy
-0  driving_experience         0.7771
-
-Best Feature: driving_experience with Accuracy: 0.78
-
-Best Feature Model Summary:
-
-                           Logit Regression Results                           
-==============================================================================
-Dep. Variable:                outcome   No. Observations:                10000
-Model:                          Logit   Df Residuals:                     9996
-Method:                           MLE   Df Model:                            3
-Date:                Wed, 01 Jan 2025   Pseudo R-squ.:                  0.2487
-Time:                        05:57:11   Log-Likelihood:                -4670.9
-converged:                       True   LL-Null:                       -6217.2
-Covariance Type:            nonrobust   LLR p-value:                     0.000
-================================================================================================
-                                   coef    std err          z      P>|z|      [0.025      0.975]
-------------------------------------------------------------------------------------------------
-Intercept                        0.5238      0.035     15.043      0.000       0.456       0.592
-driving_experience[T.10-19y]    -1.6844      0.054    -31.380      0.000      -1.790      -1.579
-driving_experience[T.20-29y]    -3.4384      0.104    -32.957      0.000      -3.643      -3.234
-driving_experience[T.30y+]      -4.4674      0.228    -19.557      0.000      -4.915      -4.020
-================================================================================================
-```
-```
-0-9y      3530
-10-19y    3299
-20-29y    2119
-30y+      1052
-Name: driving_experience, dtype: int64
-```
-![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/9ed4cb74cb9d3073f36867f1a4e88df05bfd7ed5/Images/Outcome%20Distribution%20by%20Best%20Feature.png)
-```
-
-### **Conclusion:**
-By analyzing various features, we identified that driving_experience is the best single predictor of whether a customer will make a claim on their car insurance during the policy period. This feature achieved the highest model accuracy of 77.71%. The logistic regression model shows that as driving experience increases, the likelihood of making a claim decreases.
-```
-### Visualizing Performance of the Best Feature
-
-**Purpose:** To evaluate the model's performance through a confusion matrix and detailed classification metrics.
-
-**Why:** Metrics like precision, recall, and F1-score show how well the model predicts each class, helping identify strengths and weaknesses.
-
-```python
-y_pred = best_model.predict(cars[best_feature_name])
+# Visualize Performance of the Best Feature
+y_pred = best_model.predict(cars[[best_feature_name]])
 y_pred_class = (y_pred >= 0.5).astype(int)
 
 # Confusion Matrix
@@ -364,7 +283,37 @@ plt.show()
 print("Classification Report:\n", classification_report(cars["outcome"], y_pred_class))
 print("Accuracy Score:", accuracy_score(cars["outcome"], y_pred_class))
 ```
-![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/ae36cb342ea0c9f8aadb9d37ec2f3d2614c51dcc/Confusion%20Matrix.png)
+### **Conclusion:**
+By analyzing various features, we identified that driving_experience is the best single predictor of whether a customer will make a claim on their car insurance during the policy period. This feature achieved the highest model accuracy of 77.71%. The logistic regression model shows that as driving experience increases, the likelihood of making a claim decreases.
+```
+```
+### Visualizing Performance of the Best Feature
+
+**Purpose:** To evaluate the model's performance through a confusion matrix and detailed classification metrics.
+
+**Why:** Metrics like precision, recall, and F1-score show how well the model predicts each class, helping identify strengths and weaknesses.
+
+```python
+# Train the best model again to ensure everything is correctly linked
+best_model = logit(f"outcome ~ {best_feature_name}", data=cars).fit(disp=False)
+
+# Visualize Performance of the Best Feature
+y_pred = best_model.predict(cars[[best_feature_name]])
+y_pred_class = (y_pred >= 0.5).astype(int)
+
+# Confusion Matrix
+cm = confusion_matrix(cars["outcome"], y_pred_class)
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["No", "Yes"], yticklabels=["No", "Yes"])
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix for Best Feature Model")
+plt.show()
+
+# Performance Metrics
+print("Classification Report:\n", classification_report(cars["outcome"], y_pred_class))
+print("Accuracy Score:", accuracy_score(cars["outcome"], y_pred_class))
+
+```
 ```
 Classification Report:
                precision    recall  f1-score   support
@@ -381,7 +330,7 @@ Accuracy Score: 0.7771
 ```
 - `confusion_matrix`: Summarizes model predictions versus actuals.
 - `classification_report`: Provides detailed metrics for precision, recall, and F1-score.
-
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/ae36cb342ea0c9f8aadb9d37ec2f3d2614c51dcc/Confusion%20Matrix.png)
 ## Summary
 
 We built a model to predict whether a customer will make a claim on their car insurance during the policy period. Our goal was to find the single best feature that could give us the most accurate predictions.
@@ -417,9 +366,32 @@ We used a confusion matrix to visualize the performance of our model. Here’s a
 - **False Positives**: The model incorrectly predicted 1,313 cases as claims when they were not.
 - **False Negatives**: The model missed 916 actual claims, predicting them as non-claims.
 
-
-  
 ```
 
+# Visualize Feature Importance for All Features
+odds_ratios = pd.DataFrame({
+    feature: np.exp(models[i].params) for i, feature in enumerate(features)
+})
+
+# Calculate the mean odds ratios for each feature
+mean_odds_ratios = odds_ratios.mean(axis=1).sort_values(ascending=False)
+
+# Plot the feature importance as a horizontal bar chart
+mean_odds_ratios.plot(kind="barh", title="Feature Importance Based on Odds Ratios", color="teal")
+plt.xlabel("Odds Ratio")
+plt.ylabel("Features")
+plt.tight_layout()  # Adjust layout to prevent clipping of labels
+plt.show()
+
+
+# Driving Experience Analysis
+print(cars['driving_experience'].value_counts())
+sns.countplot(x='driving_experience', hue='outcome', data=cars)
+plt.title("Outcome Distribution by Driving Experience")
+plt.show()
+
+```
+
+![](https://github.com/snoowbirvd/Logistic-Regression-Analysis-Car-Insurance-Dataset/blob/9ed4cb74cb9d3073f36867f1a4e88df05bfd7ed5/Images/Outcome%20Distribution%20by%20Best%20Feature.png)
 
 
