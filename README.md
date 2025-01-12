@@ -1,4 +1,6 @@
 # Logistic Regression Analysis: Car Insurance Dataset
+Machine learning is very popular in the insurance market, which has long been renowned for being data-driven.
+Working on behalf of On the Road car insurance, you'll investigate their customer data to identify the feature that produces the most accurate logistic regression model for them to predict whether a claim will be made against a policy!
 
 ## Project Overview
 This project aims to build a logistic regression model to predict whether a customer will make a claim on their car insurance during the policy period. The goal is to identify the single feature that results in the best-performing model, as measured by accuracy. The dataset provided (`car_insurance.csv`) contains various features about customers and their car insurance policies.
